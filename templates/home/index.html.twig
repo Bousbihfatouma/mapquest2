@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="/deuxieme.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+
+{% endblock %}
+
+
+{% block body %}
+{# <style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <h1>Hello {{ controller_name }}! ✅</h1>
+
+    This friendly message is coming from:
+    <ul>
+        <li>Your controller at <code><a href="{{ 'C:/wamp64/www/violence-zero-v88/src/Controller/HomeController.php'|file_link(0) }}">src/Controller/HomeController.php</a></code></li>
+        <li>Your template at <code><a href="{{ 'C:/wamp64/www/violence-zero-v88/templates/home/index.html.twig'|file_link(0) }}">templates/home/index.html.twig</a></code></li>
+    </ul>
+</div> #}
+
+<h1>Accueil</h1>
+
+<div>
+    <a href="{{ path('app_question') }}">Questions</a>
+</div>
+
+<div id="map" style="width: 100%; height: 500px; background-color: black"></div>
+
+<script>
+const map = L.map('map').setView([{{ markers[0].latitude }}, {{ markers[0].longitude }}], 13);
+
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+
+{% for marker in markers %}
+    L.marker([{{ marker.latitude }}, {{ marker.longitude }}]).addTo(map)
+        .bindPopup('{{ marker.title}}');
+{% endfor %}
+</script>
+
+<button onclick="loadMarkers('type1')">Afficher Marqueurs Type 1</button>
+<button onclick="loadMarkers('type2')">Afficher Marqueurs Type 2</button>
+<button onclick="loadMarkers('type3')">Afficher Marqueurs Type 3</button>
+
+
+
+{% endblock %}

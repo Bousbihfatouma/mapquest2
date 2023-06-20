@@ -1,0 +1,100 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Violentometre
+{% endblock %}
+
+{% block stylesheets %}
+<style>
+#violentometre-section {
+    width: 100%;
+    max-width: 700px;
+    margin: 200px auto 0 auto;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+#violentometre-section h1 {
+    text-align: center;
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<section id="violentometre-section">
+    <h1>Violentometre</h1>
+    <div id="question-body">
+        
+    </div>
+</section>
+
+<script>
+const questions = JSON.parse('{{ questions|json_encode()|raw }}');
+
+const results = [];
+
+const displayQuestion = (index) => {
+    const question = questions[index];
+    const questionBody = document.getElementById('question-body');
+    questionBody.innerHTML = `
+        <h3>${question.text}</h3>
+        <input class="btn-answer" type="button" name="answer" value="Oui">
+        <input class="btn-answer" type="button" name="answer" value="Non">
+    `;
+    /*
+    document.querySelector('.question-form').addEventListener('submit', (e) => {
+        console.log(e);
+        e.preventDefault();
+        const formData = new FormData(document.querySelector('.question-form'));
+        const questionId = formData.get('question');
+        const answer = formData.get('answer');
+        console.log(formData);
+        results.push({ questionId, answer });
+        if (questions[index + 1]) {
+            displayQuestion(index + 1);
+        } else {
+            displayResults();
+        }
+    });*/
+    document.querySelectorAll('.btn-answer').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const questionId = question.id;
+            const answer = e.target.value;
+            results.push({ questionId, answer });
+            if (questions[index + 1]) {
+                displayQuestion(index + 1);
+            } else {
+                displayResults();
+            }
+        });
+    });
+}
+
+const displayResults = function () {
+    const questionBody = document.getElementById('question-body');
+    let highestLevel = 0;
+    for (const result of results) {
+        const question = questions.find(question => question.id === result.questionId);
+        if (question.level > highestLevel) {
+            highestLevel = question.level;
+        }
+    }
+    questionBody.innerHTML = `
+        <h3>Les résultats</h3>
+        <p>Niveau de violence : <span class="text-danger">${highestLevel}</span></p>
+        <ul>
+            ${results.map(result => {
+                const question = questions.find(question => question.id === result.questionId);
+                return `<li>${question.text} : ${result.answer}</li>`;
+            }).join('')}
+        </ul>
+    `;
+}
+
+displayQuestion(0);
+
+</script>
+{% endblock %}
